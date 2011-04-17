@@ -1,6 +1,7 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
-Time zone is GMT+2.
+0.78 Sat Apr 16 15:45:12 2011
+    => Just increased the version number.
 
 0.73 Tue Jan 11 02:13:45 2011
     => First release. Currently not enabled in Sys::Info.

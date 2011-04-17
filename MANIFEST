@@ -16,3 +16,4 @@ t/202-pod-coverage.t
 Makefile.PL	Generated automatically
 LICENSE
 META.yml
+META.json

@@ -335,7 +335,7 @@ sub _build_monolith {
    PROVE: {
       warn "\tTESTING MONOLITH\n";
       local $ENV{AUTHOR_TESTING_MONOLITH_BUILD} = 1;
-      my @output = qx(prove -Imonolithic_version t);
+      my @output = qx(prove -Imonolithic_version);
       for my $line ( @output ) {
          print "\t$line" or croak "Unable to print to STDOUT: $!";
       }

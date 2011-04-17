@@ -4,7 +4,7 @@ die "OS unsupported\n" if $^O ne 'darwin';
 {
     module_name => 'Sys::Info::Driver::OSX',
     requires    => {
-        'Sys::Info::Base'   => '0.73',
+        'Sys::Info::Base'   => '0.78',
         'Capture::Tiny'     => 0,
         'Mac::PropertyList' => 0,
     },
