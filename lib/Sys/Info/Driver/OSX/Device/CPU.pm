@@ -7,7 +7,7 @@ use POSIX ();
 use Sys::Info::Driver::OSX;
 use constant RE_SPACE => qr{\s+}xms;
 
-our $VERSION = '0.78';
+our $VERSION = '0.79';
 
 sub identify {
     my $self = shift;
@@ -54,10 +54,10 @@ sub identify {
             push @flags, 'LM';
         }
 
-        my($cache_size) = split RE_SPACE, $cpu->{l2_cache};
-        my($speed)      = split RE_SPACE, $cpu->{current_processor_speed};
-        $cache_size    *= 1024;
-        $speed         *= 1000;
+        my($cache_size) = $cpu->{l2_cache} ? split RE_SPACE, $cpu->{l2_cache} : 0;
+        my($speed)      = $cpu->{current_processor_speed} ? split RE_SPACE, $cpu->{current_processor_speed} : 0;
+        $cache_size    *= 1024 if $cache_size;
+        $speed         *= 1000 if $speed;
 
         push @{ $self->{META_DATA} }, {
             serial_number                => $cpu->{serial_number},
@@ -93,7 +93,9 @@ sub load {
 
 sub bitness {
     my $self = shift;
-    my $LM   = grep { $_ eq 'LM' } map { @{$_->{flags}} } $self->identify;
+    my @id   = $self->identify or return;
+    @id = grep { ref $_ } @id  or return;
+    my $LM   = grep { $_ eq 'LM' } map { @{$_->{flags}} } @id;
     return $LM ? '64' : '32';
 }
 
@@ -111,8 +113,8 @@ Sys::Info::Driver::OSX::Device::CPU - OSX CPU Device Driver
 
 =head1 DESCRIPTION
 
-This document describes version C<0.78> of C<Sys::Info::Driver::OSX::Device::CPU>
-released on C<17 April 2011>.
+This document describes version C<0.79> of C<Sys::Info::Driver::OSX::Device::CPU>
+released on C<24 April 2011>.
 
 Identifies the CPU with system commands, L<POSIX>.
 
