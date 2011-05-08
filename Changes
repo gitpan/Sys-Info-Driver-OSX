@@ -1,5 +1,8 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
+0.791 Mon May  9 01:45:35 2011
+    => Another bitness fix.
+
 0.79 Sun Apr 24 00:21:09 2011
     => Check the values in cpu::bitness to prevent die()ing.
 

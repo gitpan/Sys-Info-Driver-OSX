@@ -7,7 +7,7 @@ use POSIX ();
 use Sys::Info::Driver::OSX;
 use constant RE_SPACE => qr{\s+}xms;
 
-our $VERSION = '0.79';
+our $VERSION = '0.791';
 
 sub identify {
     my $self = shift;
@@ -34,12 +34,12 @@ sub identify {
                  :                                 $mach
                  ;
 
-        my $name = fsysctl('hw.model');
+        my $name = fsysctl('hw.model') || q{};
         $name =~ s{\s+}{ }xms;
         my $byteorder = nsysctl('hw.byteorder');
 
         my @flags;
-        foreach my $f ( @{$mcpu}{qw/ extfeatures features /} ) {
+        foreach my $f ( @{ $mcpu }{ qw/ extfeatures features / } ) {
             next if ref $f ne 'HASH';
             next if ! $f->{value};
             push @flags, split RE_SPACE, __PACKAGE__->trim( $f->{value} );
@@ -54,8 +54,9 @@ sub identify {
             push @flags, 'LM';
         }
 
-        my($cache_size) = $cpu->{l2_cache} ? split RE_SPACE, $cpu->{l2_cache} : 0;
-        my($speed)      = $cpu->{current_processor_speed} ? split RE_SPACE, $cpu->{current_processor_speed} : 0;
+        my($cps, $c2)   = @{ $cpu }{ qw/ current_processor_speed l2_cache / };
+        my($cache_size) = $c2  ? split RE_SPACE, $c2  : 0;
+        my($speed)      = $cps ? split RE_SPACE, $cps : 0;
         $cache_size    *= 1024 if $cache_size;
         $speed         *= 1000 if $speed;
 
@@ -85,17 +86,28 @@ sub identify {
 
 sub load {
     my $self  = shift;
-    my $level = shift;
-    (my $raw = fsysctl('vm.loadavg')) =~ s<[{}]><>xmsg;
+    my $level = shift || 0;
+    my $raw   = fsysctl('vm.loadavg') || return;
+       $raw   =~ s<[{}]><>xmsg;
     my @loads = split m{\s}xms, __PACKAGE__->trim( $raw );
+    if ( $level > $#loads || $level < 0 ) {
+        croak "Bogus load level $level specified";
+    }
     return $loads[$level];
 }
 
 sub bitness {
     my $self = shift;
-    my @id   = $self->identify or return;
-    @id = grep { ref $_ } @id  or return;
-    my $LM   = grep { $_ eq 'LM' } map { @{$_->{flags}} } @id;
+    my @cpus = $self->identify or return;
+
+    my @flags;
+    foreach my $cpu ( grep { ref $_ eq 'HASH' } @cpus ) {
+        next if ref $cpu->{flags} ne 'ARRAY';
+        push @flags, @{ $cpu->{flags} };
+    }
+
+    return if ! @flags; # restricted ENV?
+    my $LM = grep { $_ eq 'LM' } @flags;
     return $LM ? '64' : '32';
 }
 
@@ -113,8 +125,8 @@ Sys::Info::Driver::OSX::Device::CPU - OSX CPU Device Driver
 
 =head1 DESCRIPTION
 
-This document describes version C<0.79> of C<Sys::Info::Driver::OSX::Device::CPU>
-released on C<24 April 2011>.
+This document describes version C<0.791> of C<Sys::Info::Driver::OSX::Device::CPU>
+released on C<9 May 2011>.
 
 Identifies the CPU with system commands, L<POSIX>.
 
