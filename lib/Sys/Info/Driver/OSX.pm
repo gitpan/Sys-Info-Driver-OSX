@@ -11,7 +11,7 @@ use constant SYSCTL_NOT_EXISTS  =>
 use Capture::Tiny qw( capture );
 use Carp          qw( croak   );
 
-our $VERSION = '0.791';
+our $VERSION = '0.792';
 our @EXPORT  = qw( fsysctl nsysctl sw_vers system_profiler );
 
 sub system_profiler {
@@ -66,9 +66,9 @@ sub _sysctl {
 
     if ( $out ) {
         foreach my $row ( split m{\n}xms, $out ) {
+            chomp $row;
+            next if ! $row;
             my($name, $value) = split m{:\s}xms, $row, 2;
-            chomp $name;
-            chomp $value;
             croak 'Can not happen! No value in output!'
                 if ! $value && $value ne '0';
             $rv{ $name } = $value;
@@ -109,8 +109,8 @@ Sys::Info::Driver::OSX - OSX driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.791> of C<Sys::Info::Driver::OSX>
-released on C<9 May 2011>.
+This document describes version C<0.792> of C<Sys::Info::Driver::OSX>
+released on C<10 May 2011>.
 
 This is the main module in the C<OSX> driver collection.
 

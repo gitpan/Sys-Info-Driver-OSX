@@ -8,7 +8,7 @@ use POSIX ();
 use Sys::Info::Constants qw( LIN_REAL_NAME_FIELD );
 use Sys::Info::Driver::OSX;
 
-our $VERSION = '0.791';
+our $VERSION = '0.792';
 
 my %OSVERSION;
 
@@ -225,8 +225,8 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.791> of C<Sys::Info::Driver::OSX::OS>
-released on C<9 May 2011>.
+This document describes version C<0.792> of C<Sys::Info::Driver::OSX::OS>
+released on C<10 May 2011>.
 
 -
 

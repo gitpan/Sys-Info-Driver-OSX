@@ -2,7 +2,7 @@ package Sys::Info::Driver::OSX::Device;
 use strict;
 use warnings;
 
-our $VERSION = '0.791';
+our $VERSION = '0.792';
 
 1;
 
@@ -18,8 +18,8 @@ Sys::Info::Driver::OSX::Device - Base class for OSX device drivers
 
 =head1 DESCRIPTION
 
-This document describes version C<0.791> of C<Sys::Info::Driver::OSX::Device>
-released on C<9 May 2011>.
+This document describes version C<0.792> of C<Sys::Info::Driver::OSX::Device>
+released on C<10 May 2011>.
 
 Base class for OSX device drivers.
 
