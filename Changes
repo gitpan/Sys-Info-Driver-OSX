@@ -1,5 +1,9 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
+0.793 Tue May 10 03:02:09 2011
+    => sysctl parser regex fix.
+    => More verbose error message.
+
 0.792 Tue May 10 03:02:09 2011
     => sysctl parser fix.
 

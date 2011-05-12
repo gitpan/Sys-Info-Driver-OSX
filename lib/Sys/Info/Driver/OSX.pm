@@ -7,11 +7,13 @@ use constant SYSCTL_NOT_EXISTS  =>
     qr{second \s level \s name .+? in .+? is \s invalid}xms,
     qr{name                    .+? in .+? is \s unknown}xms,
 ;
+use constant RE_SYSCTL_SPLIT => qr{\n+}xms;
+use constant RE_SYSCTL_ROW   => qr{:(?:\s)+?}xms;
 
 use Capture::Tiny qw( capture );
 use Carp          qw( croak   );
 
-our $VERSION = '0.792';
+our $VERSION = '0.793';
 our @EXPORT  = qw( fsysctl nsysctl sw_vers system_profiler );
 
 sub system_profiler {
@@ -27,7 +29,7 @@ sub system_profiler {
     my $raw = Mac::PropertyList::parse_plist( $out )->as_perl;
 
     my %rv;
-    foreach my $e ( @$raw ) {
+    foreach my $e ( @{ $raw } ) {
         next if ref $e ne 'HASH' || ! (keys %{ $e });
         my $key     = delete $e->{_dataType};
         my $value   = delete $e->{_items};
@@ -63,14 +65,18 @@ sub _sysctl {
     my($key) = @_;
     my($out, $error) = capture { system sysctl => $key };
     my %rv;
-
     if ( $out ) {
-        foreach my $row ( split m{\n}xms, $out ) {
+        foreach my $row ( split RE_SYSCTL_SPLIT, $out ) {
             chomp $row;
             next if ! $row;
-            my($name, $value) = split m{:\s}xms, $row, 2;
-            croak 'Can not happen! No value in output!'
-                if ! $value && $value ne '0';
+            my($name, $value) = split RE_SYSCTL_ROW, $row, 2;
+            if ( ! $value && $value ne '0' ) {
+                croak sprintf q(Can't happen: No value in output for property )
+                            . q('%s' inside row '%s' collected from key '%s'),
+                                $name || q([no name]),
+                                $row,
+                                $key;
+            }
             $rv{ $name } = $value;
         }
     }
@@ -109,8 +115,8 @@ Sys::Info::Driver::OSX - OSX driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.792> of C<Sys::Info::Driver::OSX>
-released on C<10 May 2011>.
+This document describes version C<0.793> of C<Sys::Info::Driver::OSX>
+released on C<12 May 2011>.
 
 This is the main module in the C<OSX> driver collection.
 
