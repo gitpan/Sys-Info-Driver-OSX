@@ -1,5 +1,8 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
+0.795 Mon May 16 04:09:54 2011
+    => Swap support.
+
 0.794 Thu May 12 05:48:29 2011
     => Implement install date.
     => Improve sysctl parsers.

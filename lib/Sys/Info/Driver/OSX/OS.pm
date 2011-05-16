@@ -2,7 +2,7 @@ package Sys::Info::Driver::OSX::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.794';
+our $VERSION = '0.795';
 
 use base qw( Sys::Info::Base );
 use Carp qw( croak );
@@ -26,6 +26,12 @@ my %MONTH_TO_ID = do {
     map { $_ => $c++ }
         qw( Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec );
 };
+
+my %UNIT_TO_BYTES = (
+    G => 1024**3,
+    M => 1024**2,
+    K => 1024,
+);
 
 my %OSVERSION;
 
@@ -71,12 +77,7 @@ sub meta {
     my $arch      = ($cpu->identify)[0]->{architecture};
     my $physmem   = fsysctl('hw.memsize'); # physmem
     my $usermem   = fsysctl('hw.usermem');
-
-    # XXX
-    my %swap;
-    @swap{ qw/ path size used / } = qw( TODO 0 0);
-    $swap{path} = undef;
-
+    my %swap      = $self->_probe_swap;
     my %info;
 
     # http://jaharmi.com/2007/05/11/read_the_mac_os_x_edition_and_version_from_prope
@@ -93,15 +94,15 @@ sub meta {
 
     $info{physical_memory_total}     = $physmem / 1024;
     $info{physical_memory_available} = ( $physmem - $usermem ) / 1024;
-    $info{page_file_total}           = $swap{size};
-    $info{page_file_available}       = $swap{size} - $swap{used};
+    $info{page_file_total}           = $swap{total};
+    $info{page_file_available}       = $swap{free};
 
     # windows specific
     $info{windows_dir}               = undef;
     $info{system_dir}                = undef;
 
     $info{system_manufacturer}       = 'Apple Inc.';
-    $info{system_model}              = undef;
+    $info{system_model}              = undef; # iMac/MacBook ???
     $info{system_type}               = sprintf '%s based Computer', $arch;
 
     $info{page_file_path}            = $swap{path};
@@ -189,6 +190,7 @@ sub node_name { return shift->uname->{nodename} }
 sub domain_name { }
 
 sub fs {
+    # TODO
     my $self = shift;
     return unimplemented => 1;
 }
@@ -203,6 +205,33 @@ sub bitness {
 }
 
 # ------------------------[ P R I V A T E ]------------------------ #
+
+sub _probe_swap {
+    my($self) = @_;
+    # `vm_stat` ?
+    my $swapusage = fsysctl 'vm.swapusage';
+    my @sparts    = split m<\s{2,}>xms, $swapusage;
+    my $swap_enc  = $sparts[-1] =~ m{encrypted}xms ? pop @sparts : undef;
+    my %sw        = map { split m{ \s+ = \s+ }xms, $_ } @sparts;
+    my $size      = sub {
+        my($unit, $orig) = @_;
+        return $UNIT_TO_BYTES{ $unit }
+                || croak "Unable to determine bytes from $unit unit ($orig)"
+    };
+
+    foreach my $prop ( qw( free used total ) ) {
+        my $value = $sw{ $prop } || next;
+        my $unit  = chop $value;
+        $value += 0;
+        $sw{ $prop } = $value ? $value * $size->( $unit, $sw{ $prop } ) : 0;
+    }
+
+    return
+        %sw,
+        encrypted => $swap_enc ? 1 : 0,
+        path      => -d '/private/var/vm' ? '/private/var/vm' : undef,
+    ;
+}
 
 sub _install_date {
     my $self = shift;
@@ -304,7 +333,7 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.794> of C<Sys::Info::Driver::OSX::OS>
+This document describes version C<0.795> of C<Sys::Info::Driver::OSX::OS>
 released on C<16 May 2011>.
 
 -
@@ -347,7 +376,8 @@ Please see L<Sys::Info::OS> for definitions of these methods and more.
 
 L<Sys::Info>, L<Sys::Info::OS>,
 L<http://en.wikipedia.org/wiki/Mac_OS_X>,
-L<http://stackoverflow.com/questions/3610424/determine-kernel-bitness-in-mac-os-x-10-6>.
+L<http://stackoverflow.com/questions/3610424/determine-kernel-bitness-in-mac-os-x-10-6>,
+L<http://osxdaily.com/2010/10/08/mac-virtual-memory-swap/>.
 
 =head1 AUTHOR
 

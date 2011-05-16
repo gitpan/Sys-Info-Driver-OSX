@@ -14,7 +14,7 @@ use constant RE_OLD_SYSCTL_ROW => qr{(?:\s)+?=(?:\s)+?}xms;
 use Capture::Tiny qw( capture );
 use Carp          qw( croak   );
 
-our $VERSION = '0.794';
+our $VERSION = '0.795';
 our @EXPORT  = qw(
     fsysctl
     nsysctl
@@ -141,7 +141,7 @@ Sys::Info::Driver::OSX - OSX driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.794> of C<Sys::Info::Driver::OSX>
+This document describes version C<0.795> of C<Sys::Info::Driver::OSX>
 released on C<16 May 2011>.
 
 This is the main module in the C<OSX> driver collection.
