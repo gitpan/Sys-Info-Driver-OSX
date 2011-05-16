@@ -2,6 +2,7 @@ lib/Sys/Info/Driver/OSX.pm
 lib/Sys/Info/Driver/OSX/Device.pm
 lib/Sys/Info/Driver/OSX/OS.pm
 lib/Sys/Info/Driver/OSX/Device/CPU.pm
+t/01-parsers.t
 t/03-basic.t
 Build.PL
 Changes

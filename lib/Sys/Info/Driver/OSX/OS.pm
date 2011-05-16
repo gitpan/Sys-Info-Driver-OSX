@@ -1,6 +1,9 @@
 package Sys::Info::Driver::OSX::OS;
 use strict;
 use warnings;
+
+our $VERSION = '0.794';
+
 use base qw( Sys::Info::Base );
 use Carp qw( croak );
 use Cwd;
@@ -8,9 +11,29 @@ use POSIX ();
 use Sys::Info::Constants qw( LIN_REAL_NAME_FIELD );
 use Sys::Info::Driver::OSX;
 
-our $VERSION = '0.793';
+use constant RE_DATE_STAMP => qr{
+    \A
+     [a-z]{3}  \s                       # Thu
+    ([a-z]{3}) \s                       # May
+    ([0-9]{2}) \s                       # 12
+    ([0-9]{2} : [0-9]{2} : [0-9]{2}) \s # 00:51:29
+    ([0-9]{4})                          # 2011
+    \z
+}xmsi;
+
+my %MONTH_TO_ID = do {
+    my $c = 0;
+    map { $_ => $c++ }
+        qw( Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec );
+};
 
 my %OSVERSION;
+
+my %FILE = (
+    install_history => '/Library/Receipts/InstallHistory.plist',
+    server_version  => '/System/Library/CoreServices/ServerVersion.plist',
+    cdis            => '/var/log/CDIS.custom',
+);
 
 my $EDITION = {
     # taken from Wikipedia
@@ -39,7 +62,7 @@ sub tz {
 
 sub meta {
     my $self = shift;
-    $self->_populate_osversion();
+    $self->_populate_osversion;
 
     require POSIX;
     require Sys::Info::Device;
@@ -56,12 +79,16 @@ sub meta {
 
     my %info;
 
+    # http://jaharmi.com/2007/05/11/read_the_mac_os_x_edition_and_version_from_prope
+    # desktop: /System/Library/CoreServices/SystemVersion.plist
+    my $has_server = -e $FILE{server_version};
+
     $info{manufacturer}              = 'Apple Inc.';
-    $info{build_type}                = undef;
+    $info{build_type}                = $has_server ? 'Server' : 'Desktop';
     $info{owner}                     = undef;
     $info{organization}              = undef;
     $info{product_id}                = undef;
-    $info{install_date}              = undef;
+    $info{install_date}              = $self->_install_date;
     $info{boot_device}               = undef;
 
     $info{physical_memory_total}     = $physmem / 1024;
@@ -104,8 +131,16 @@ sub build     { shift->_populate_osversion(); return $OSVERSION{RAW}->{BUILD} }
 sub uptime {
     my $key   = 'kern.boottime';
     my $value = fsysctl $key;
-    if ( $value =~ m<\A[{](.+?)[}]\s+?(.+?)\z>xms ) {
-        my($data, $stamp) = ($1, $2);
+    my $sec   = _parse_uptime( $value, $key );
+    croak "Bogus data returned from $key: $value" if ! $sec;
+    return $sec;
+}
+
+sub _parse_uptime {
+    my($value, $key) = @_;
+
+    if ( my @m = $value =~ m<\A[{](.+?)[}]\s+?(.+?)\z>xms ) {
+        my($data, $stamp) = @m;
         my %data = map {
                         map {
                             __PACKAGE__->trim($_)
@@ -114,7 +149,20 @@ sub uptime {
         croak "sec key does not exist in $key" if ! exists $data{sec};
         return $data{sec};
     }
-    croak "Bogus data returned from $key: $value";
+
+    if ( my @m = $value =~ RE_DATE_STAMP ) {
+        my($mon_name, $mday, $hms, $year) = @m;
+        my $mon = $MONTH_TO_ID{ $mon_name }
+                    || croak "Unable to gather month from $mon_name";
+        my($hour, $min, $sec) = split m{:}xms, $hms;
+
+        require Time::Local;
+        return Time::Local::timelocal(
+            $sec, $min, $hour, $mday, $mon, $year
+        );
+    }
+
+    return;
 }
 
 # user methods
@@ -156,6 +204,37 @@ sub bitness {
 
 # ------------------------[ P R I V A T E ]------------------------ #
 
+sub _install_date {
+    my $self = shift;
+    # I have no /var/log/OSInstall.custom on my system, so I believe that
+    # file is no longer reliable
+    my @idate;
+    push @idate, -e $FILE{cdis} ? ( stat $FILE{cdis} )[10] : ();
+
+    if ( -e $FILE{install_history} ) {
+        my $rec  = plist( $FILE{install_history} );
+        push @idate, $rec ? do {
+            # poor mans date parser
+            my $d = $rec->[0]{date} || q();
+            my($y,$h) = split m{T}xms, $d, 2;
+            if ( $y && $h ) {
+                chop $h;
+                my($year, $mon, $mday) = split m{\-}xms, $y;
+                my($hour, $min, $sec)  = split m{:}xms, $h;
+                require Time::Local;
+                Time::Local::timelocal(
+                    $sec, $min, $hour, $mday, $mon - 1, $year
+                );
+            }
+            else {
+                ()
+            }
+        } : ();
+    }
+
+   return @idate ? (sort { $a <=> $b } @idate)[0] : undef;
+}
+
 sub _file_has_substr {
     my $self = shift;
     my $file = shift;
@@ -174,28 +253,28 @@ sub _probe_edition {
 sub _populate_osversion {
     return if %OSVERSION;
     my $self    = shift;
-    require POSIX;
-    my($sysname, $nodename, $release, $version, $machine) = POSIX::uname();
+    my $uname   = $self->uname;
 
     # 'Darwin Kernel Version 10.5.0: Fri Nov  5 23:20:39 PDT 2010; root:xnu-1504.9.17~1/RELEASE_I386',
-    my($stuff, $root) = split m{;}xms, $version, 2;
+    my($stuff, $root) = split m{;}xms, $uname->{version}, 2;
     my($name, $stamp) = split m{:}xms, $stuff, 2;
     $_ = __PACKAGE__->trim( $_ ) for $stuff, $root, $name, $stamp;
 
-    my %sw_vers = sw_vers();
-
+    my %sw_vers    = sw_vers();
     my $build_date = $stamp ? $self->date2time( $stamp ) : undef;
     my $build      = $sw_vers{BuildVersion} || $stamp;
-    my $edition    = $self->_probe_edition( $sw_vers{ProductVersion} || $release );
+    my $edition    = $self->_probe_edition(
+                        $sw_vers{ProductVersion} || $uname->{release}
+                    );
 
-    $sysname = 'Mac OSX' if $sysname eq 'Darwin';
+    my $sysname = $uname->{sysname} eq 'Darwin' ? 'Mac OSX' : $uname->{sysname};
 
     %OSVERSION = (
         NAME             => $sysname,
         NAME_EDITION     => $edition ? "$sysname ($edition)" : $sysname,
         LONGNAME         => q{}, # will be set below
         LONGNAME_EDITION => q{}, # will be set below
-        VERSION  => $sw_vers{ProductVersion} || $release,
+        VERSION  => $sw_vers{ProductVersion} || $uname->{release},
         KERNEL   => undef,
         RAW      => {
                         BUILD      => defined $build      ? $build      : 0,
@@ -225,8 +304,8 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.793> of C<Sys::Info::Driver::OSX::OS>
-released on C<12 May 2011>.
+This document describes version C<0.794> of C<Sys::Info::Driver::OSX::OS>
+released on C<16 May 2011>.
 
 -
 
