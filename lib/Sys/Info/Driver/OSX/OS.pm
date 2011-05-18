@@ -2,7 +2,7 @@ package Sys::Info::Driver::OSX::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.795';
+our $VERSION = '0.7951';
 
 use base qw( Sys::Info::Base );
 use Carp qw( croak );
@@ -138,7 +138,7 @@ sub uptime {
 }
 
 sub _parse_uptime {
-    my($value, $key) = @_;
+    my($value, $key, $use_gmtime) = @_;
 
     if ( my @m = $value =~ m<\A[{](.+?)[}]\s+?(.+?)\z>xms ) {
         my($data, $stamp) = @m;
@@ -158,9 +158,9 @@ sub _parse_uptime {
         my($hour, $min, $sec) = split m{:}xms, $hms;
 
         require Time::Local;
-        return Time::Local::timelocal(
-            $sec, $min, $hour, $mday, $mon, $year
-        );
+        my $converter = $use_gmtime ? \&Time::Local::timegm
+                                    : \&Time::Local::timelocal;
+        return $converter->( $sec, $min, $hour, $mday, $mon, $year );
     }
 
     return;
@@ -333,8 +333,8 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.795> of C<Sys::Info::Driver::OSX::OS>
-released on C<16 May 2011>.
+This document describes version C<0.7951> of C<Sys::Info::Driver::OSX::OS>
+released on C<19 May 2011>.
 
 -
 

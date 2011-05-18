@@ -7,7 +7,7 @@ use POSIX ();
 use Sys::Info::Driver::OSX;
 use constant RE_SPACE => qr{\s+}xms;
 
-our $VERSION = '0.795';
+our $VERSION = '0.7951';
 
 sub identify {
     my $self = shift;
@@ -125,8 +125,8 @@ Sys::Info::Driver::OSX::Device::CPU - OSX CPU Device Driver
 
 =head1 DESCRIPTION
 
-This document describes version C<0.795> of C<Sys::Info::Driver::OSX::Device::CPU>
-released on C<16 May 2011>.
+This document describes version C<0.7951> of C<Sys::Info::Driver::OSX::Device::CPU>
+released on C<19 May 2011>.
 
 Identifies the CPU with system commands, L<POSIX>.
 

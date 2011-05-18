@@ -335,7 +335,27 @@ sub _build_monolith {
    PROVE: {
       warn "\tTESTING MONOLITH\n";
       local $ENV{AUTHOR_TESTING_MONOLITH_BUILD} = 1;
-      my @output = qx(prove -Imonolithic_version);
+      require File::Basename;
+      require File::Spec;
+      my $pbase = File::Basename::dirname( $^X );
+
+      my $prove;
+      find {
+         wanted => sub {
+            my $file = $_;
+            return if $file !~ m{ prove }xms;
+            $prove = $file;
+         },
+         no_chdir => 1,
+      }, $pbase;
+
+      if ( ! $prove || ! -e $prove ) {
+          croak "No `prove command found related to $^X`";
+      }
+
+      warn "\n\tFOUND `prove` at $prove\n\n";
+
+      my @output = qx($prove -Imonolithic_version);
       for my $line ( @output ) {
          print "\t$line" or croak "Unable to print to STDOUT: $!";
       }

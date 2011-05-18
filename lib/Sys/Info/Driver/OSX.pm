@@ -8,13 +8,18 @@ use constant SYSCTL_NOT_EXISTS  =>
     qr{name                    .+? in .+? is \s unknown}xms,
 ;
 use constant RE_SYSCTL_SPLIT   => qr{\n+}xms;
-use constant RE_SYSCTL_ROW     => qr{:(?:\s)+?}xms;
-use constant RE_OLD_SYSCTL_ROW => qr{(?:\s)+?=(?:\s)+?}xms;
+use constant RE_SYSCTL_ROW     => qr{
+    \A
+    ([a-zA-Z0-9_.]+) # this must be capturing parenthesis
+    (?:\s+)?         # optional space
+    [:=]             # the key name termination character
+                     # new sysctl uses ":" to separate key/value pairs
+}xms;
 
 use Capture::Tiny qw( capture );
 use Carp          qw( croak   );
 
-our $VERSION = '0.795';
+our $VERSION = '0.7951';
 our @EXPORT  = qw(
     fsysctl
     nsysctl
@@ -101,21 +106,16 @@ sub _sysctl {
 }
 
 sub _parse_sysctl_row {
-    my($row, $key, $major) = @_;
-    $major ||= do {
-        my %sw_vers = sw_vers();
-        (split m{[.]}xms, $sw_vers{ProductVersion} || q{})[0] || 0;
-    };
-    my $re_row = $major == 10 ? RE_SYSCTL_ROW : RE_OLD_SYSCTL_ROW;
-    my($name, $value) = split $re_row, $row, 2;
-    if ( ! $value && ( ! defined $value || $value ne '0' ) ) {
+    my($row, $key) = @_;
+    my(undef, $name, $value) = split RE_SYSCTL_ROW, $row, 2;
+    if ( ! defined $value || $value eq q{} ) {
         croak sprintf q(Can't happen: No value in output for property )
-                    . q('%s' inside row '%s' collected from key '%s'),
+                     . q('%s' inside row '%s' collected from key '%s'),
                         $name || q([no name]),
                         $row,
                         $key;
     }
-    return $name, $value;
+    return map { __PACKAGE__->trim( $_ ) } $name, $value;
 }
 
 sub _sysctl_not_exists {
@@ -141,8 +141,8 @@ Sys::Info::Driver::OSX - OSX driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.795> of C<Sys::Info::Driver::OSX>
-released on C<16 May 2011>.
+This document describes version C<0.7951> of C<Sys::Info::Driver::OSX>
+released on C<19 May 2011>.
 
 This is the main module in the C<OSX> driver collection.
 

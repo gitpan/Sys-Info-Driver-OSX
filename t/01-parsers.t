@@ -32,13 +32,13 @@ UPTIME: {
     my $p     = \&Sys::Info::Driver::OSX::OS::_parse_uptime;
 
     my $stamp = q~Thu May 12 00:51:29 2011~;
-    my $up_10 = $p->( q~{ sec = 1305150689, usec = 0 } Thu May 12 00:51:29 2011~,
+    my $up_10 = $p->( q~{ sec = 1305161489, usec = 0 } Thu May 12 00:51:29 2011~,
                         'kern.boottime' );
-    my $up_08 = $p->( $stamp , 'kern.boottime' );
+    my $up_08 = $p->( $stamp , 'kern.boottime', 1 );
 
     ok( $up_10, 'Got uptime for v10' );
     ok( $up_08, 'Got uptime for v8'  );
 
-    is( scalar localtime $up_10, $stamp, 'Correct uptime for v10');
-    is( scalar localtime $up_08, $stamp, 'Correct uptime for v8' );
+    is( scalar gmtime $up_10, $stamp, 'Correct uptime for v10');
+    is( scalar gmtime $up_08, $stamp, 'Correct uptime for v8' );
 }
