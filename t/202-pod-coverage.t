@@ -13,9 +13,8 @@ my $e   = $@ || ! $eok;
 eval {
     $e ? plan( skip_all => 'Test::Pod::Coverage required for testing pod coverage' )
        : all_pod_coverage_ok();
-};
-
-if ( $@ ) {
-    diag "Some error happened in somewhere, which I'll ignore: $@";
-    ok(1);
+    1;
+} or do {
+    diag( "Some error happened in somewhere, which I don't care: $@" );
+    ok( 1, 'Fake test' );
 }

@@ -1,5 +1,8 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
+0.7952 Sat Jul 30 23:39:00 2011
+    => Better error checking for plist parser.
+
 0.7951 Thu May 19 01:13:52 2011
     => Use gmtime for parser tests.
     => Another fix for sysctl parser.

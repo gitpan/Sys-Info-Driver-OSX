@@ -19,7 +19,7 @@ use constant RE_SYSCTL_ROW     => qr{
 use Capture::Tiny qw( capture );
 use Carp          qw( croak   );
 
-our $VERSION = '0.7951';
+our $VERSION = '0.7952';
 our @EXPORT  = qw(
     fsysctl
     nsysctl
@@ -34,7 +34,9 @@ sub plist {
               ? __PACKAGE__->slurp( $thing )
               : $thing;
     require Mac::PropertyList;
-    return Mac::PropertyList::parse_plist( $raw )->as_perl;
+    my $prop = Mac::PropertyList::parse_plist( $raw )
+                    || croak "Unable to parse plist: $thing";
+    return $prop->as_perl;
 }
 
 sub system_profiler {
@@ -141,8 +143,8 @@ Sys::Info::Driver::OSX - OSX driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.7951> of C<Sys::Info::Driver::OSX>
-released on C<19 May 2011>.
+This document describes version C<0.7952> of C<Sys::Info::Driver::OSX>
+released on C<30 July 2011>.
 
 This is the main module in the C<OSX> driver collection.
 
