@@ -36,26 +36,26 @@
          "requires" : {
             "Capture::Tiny" : 0,
             "Mac::PropertyList" : 0,
-            "Sys::Info::Base" : "0.78"
+            "Sys::Info::Base" : "0.7802"
          }
       }
    },
    "provides" : {
       "Sys::Info::Driver::OSX" : {
          "file" : "lib/Sys/Info/Driver/OSX.pm",
-         "version" : "0.7952"
+         "version" : "0.7953"
       },
       "Sys::Info::Driver::OSX::Device" : {
          "file" : "lib/Sys/Info/Driver/OSX/Device.pm",
-         "version" : "0.7952"
+         "version" : "0.7953"
       },
       "Sys::Info::Driver::OSX::Device::CPU" : {
          "file" : "lib/Sys/Info/Driver/OSX/Device/CPU.pm",
-         "version" : "0.7952"
+         "version" : "0.7953"
       },
       "Sys::Info::Driver::OSX::OS" : {
          "file" : "lib/Sys/Info/Driver/OSX/OS.pm",
-         "version" : "0.7952"
+         "version" : "0.7953"
       }
    },
    "release_status" : "stable",
@@ -67,5 +67,5 @@
          "url" : "http://bitbucket.org/burak/cpan-sys-info-driver-osx/"
       }
    },
-   "version" : "0.7952"
+   "version" : "0.7953"
 }

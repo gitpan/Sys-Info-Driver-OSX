@@ -2,13 +2,13 @@ package Sys::Info::Driver::OSX::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.7952';
+our $VERSION = '0.7953';
 
 use base qw( Sys::Info::Base );
 use Carp qw( croak );
 use Cwd;
 use POSIX ();
-use Sys::Info::Constants qw( LIN_REAL_NAME_FIELD );
+use Sys::Info::Constants qw( USER_REAL_NAME_FIELD );
 use Sys::Info::Driver::OSX;
 
 use constant RE_DATE_STAMP => qr{
@@ -180,7 +180,7 @@ sub login_name {
     my($self, @args) = @_;
     my %opt   = @args % 2 ? () : @args;
     my $login = POSIX::getlogin() || return;
-    my $rv    = eval { $opt{real} ? (getpwnam $login)[LIN_REAL_NAME_FIELD] : $login };
+    my $rv    = eval { $opt{real} ? (getpwnam $login)[USER_REAL_NAME_FIELD] : $login };
     $rv =~ s{ [,]{3,} \z }{}xms if $opt{real};
     return $rv;
 }
@@ -333,8 +333,8 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.7952> of C<Sys::Info::Driver::OSX::OS>
-released on C<30 July 2011>.
+This document describes version C<0.7953> of C<Sys::Info::Driver::OSX::OS>
+released on C<1 August 2011>.
 
 -
 

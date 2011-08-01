@@ -1,5 +1,8 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
+0.7953 Mon Aug  1 02:03:22 2011
+    => Use the new constant.
+
 0.7952 Sat Jul 30 23:39:00 2011
     => Better error checking for plist parser.
 
