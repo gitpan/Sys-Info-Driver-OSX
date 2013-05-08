@@ -1,5 +1,8 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
+0.7954 Sun Dec 16 05:06:50 2012
+    => Fix ram value.
+
 0.7953 Mon Aug  1 02:03:22 2011
     => Use the new constant.
 

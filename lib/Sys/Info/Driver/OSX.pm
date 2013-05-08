@@ -19,7 +19,7 @@ use constant RE_SYSCTL_ROW     => qr{
 use Capture::Tiny qw( capture );
 use Carp          qw( croak   );
 
-our $VERSION = '0.7953';
+our $VERSION = '0.7954';
 our @EXPORT  = qw(
     fsysctl
     nsysctl
@@ -143,8 +143,8 @@ Sys::Info::Driver::OSX - OSX driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.7953> of C<Sys::Info::Driver::OSX>
-released on C<1 August 2011>.
+This document describes version C<0.7954> of C<Sys::Info::Driver::OSX>
+released on C<9 May 2013>.
 
 This is the main module in the C<OSX> driver collection.
 
@@ -180,12 +180,11 @@ Burak Gursoy <burak@cpan.org>.
 
 =head1 COPYRIGHT
 
-Copyright 2010 - 2011 Burak Gursoy. All rights reserved.
+Copyright 2010 - 2013 Burak Gursoy. All rights reserved.
 
 =head1 LICENSE
 
-This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.12.3 or, 
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.16.2 or,
 at your option, any later version of Perl 5 you may have available.
-
 =cut

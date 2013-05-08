@@ -4,7 +4,7 @@
       "Burak Gursoy <burak@cpan.org>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110930",
+   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -17,7 +17,8 @@
       "directory" : [
          "monolithic_version",
          "builder",
-         "t"
+         "t",
+         "xt"
       ]
    },
    "prereqs" : {
@@ -29,13 +30,13 @@
       },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.38"
+            "Module::Build" : "0.40"
          }
       },
       "runtime" : {
          "requires" : {
-            "Capture::Tiny" : 0,
-            "Mac::PropertyList" : 0,
+            "Capture::Tiny" : "0",
+            "Mac::PropertyList" : "0",
             "Sys::Info::Base" : "0.7802"
          }
       }
@@ -43,19 +44,19 @@
    "provides" : {
       "Sys::Info::Driver::OSX" : {
          "file" : "lib/Sys/Info/Driver/OSX.pm",
-         "version" : "0.7953"
+         "version" : "0.7954"
       },
       "Sys::Info::Driver::OSX::Device" : {
          "file" : "lib/Sys/Info/Driver/OSX/Device.pm",
-         "version" : "0.7953"
+         "version" : "0.7954"
       },
       "Sys::Info::Driver::OSX::Device::CPU" : {
          "file" : "lib/Sys/Info/Driver/OSX/Device/CPU.pm",
-         "version" : "0.7953"
+         "version" : "0.7954"
       },
       "Sys::Info::Driver::OSX::OS" : {
          "file" : "lib/Sys/Info/Driver/OSX/OS.pm",
-         "version" : "0.7953"
+         "version" : "0.7954"
       }
    },
    "release_status" : "stable",
@@ -67,5 +68,5 @@
          "url" : "http://bitbucket.org/burak/cpan-sys-info-driver-osx/"
       }
    },
-   "version" : "0.7953"
+   "version" : "0.7954"
 }

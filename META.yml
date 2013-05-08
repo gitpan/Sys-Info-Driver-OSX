@@ -6,9 +6,9 @@ build_requires:
   Test::More: 0.40
   Test::Sys::Info: 0.20
 configure_requires:
-  Module::Build: 0.38
+  Module::Build: 0.40
 dynamic_config: 1
-generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.110930'
+generated_by: 'Module::Build version 0.4003, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -19,19 +19,20 @@ no_index:
     - monolithic_version
     - builder
     - t
+    - xt
 provides:
   Sys::Info::Driver::OSX:
     file: lib/Sys/Info/Driver/OSX.pm
-    version: 0.7953
+    version: 0.7954
   Sys::Info::Driver::OSX::Device:
     file: lib/Sys/Info/Driver/OSX/Device.pm
-    version: 0.7953
+    version: 0.7954
   Sys::Info::Driver::OSX::Device::CPU:
     file: lib/Sys/Info/Driver/OSX/Device/CPU.pm
-    version: 0.7953
+    version: 0.7954
   Sys::Info::Driver::OSX::OS:
     file: lib/Sys/Info/Driver/OSX/OS.pm
-    version: 0.7953
+    version: 0.7954
 requires:
   Capture::Tiny: 0
   Mac::PropertyList: 0
@@ -39,4 +40,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://bitbucket.org/burak/cpan-sys-info-driver-osx/
-version: 0.7953
+version: 0.7954

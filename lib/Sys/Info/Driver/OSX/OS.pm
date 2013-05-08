@@ -2,7 +2,7 @@ package Sys::Info::Driver::OSX::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.7953';
+our $VERSION = '0.7954';
 
 use base qw( Sys::Info::Base );
 use Carp qw( croak );
@@ -92,8 +92,8 @@ sub meta {
     $info{install_date}              = $self->_install_date;
     $info{boot_device}               = undef;
 
-    $info{physical_memory_total}     = $physmem / 1024;
-    $info{physical_memory_available} = ( $physmem - $usermem ) / 1024;
+    $info{physical_memory_total}     = $physmem;
+    $info{physical_memory_available} = $physmem - $usermem;
     $info{page_file_total}           = $swap{total};
     $info{page_file_available}       = $swap{free};
 
@@ -333,8 +333,8 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.7953> of C<Sys::Info::Driver::OSX::OS>
-released on C<1 August 2011>.
+This document describes version C<0.7954> of C<Sys::Info::Driver::OSX::OS>
+released on C<9 May 2013>.
 
 -
 
@@ -385,12 +385,11 @@ Burak Gursoy <burak@cpan.org>.
 
 =head1 COPYRIGHT
 
-Copyright 2010 - 2011 Burak Gursoy. All rights reserved.
+Copyright 2010 - 2013 Burak Gursoy. All rights reserved.
 
 =head1 LICENSE
 
-This library is free software; you can redistribute it and/or modify 
-it under the same terms as Perl itself, either Perl version 5.12.3 or, 
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.16.2 or,
 at your option, any later version of Perl 5 you may have available.
-
 =cut
