@@ -2,7 +2,7 @@ package Sys::Info::Driver::OSX::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.7954';
+our $VERSION = '0.7955';
 
 use base qw( Sys::Info::Base );
 use Carp qw( croak );
@@ -333,8 +333,8 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.7954> of C<Sys::Info::Driver::OSX::OS>
-released on C<9 May 2013>.
+This document describes version C<0.7955> of C<Sys::Info::Driver::OSX::OS>
+released on C<11 May 2013>.
 
 -
 
