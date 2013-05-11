@@ -23,16 +23,16 @@ no_index:
 provides:
   Sys::Info::Driver::OSX:
     file: lib/Sys/Info/Driver/OSX.pm
-    version: 0.7955
+    version: 0.7956
   Sys::Info::Driver::OSX::Device:
     file: lib/Sys/Info/Driver/OSX/Device.pm
-    version: 0.7955
+    version: 0.7956
   Sys::Info::Driver::OSX::Device::CPU:
     file: lib/Sys/Info/Driver/OSX/Device/CPU.pm
-    version: 0.7955
+    version: 0.7956
   Sys::Info::Driver::OSX::OS:
     file: lib/Sys/Info/Driver/OSX/OS.pm
-    version: 0.7955
+    version: 0.7956
 requires:
   Capture::Tiny: 0
   Mac::PropertyList: 0
@@ -40,4 +40,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://bitbucket.org/burak/cpan-sys-info-driver-osx/
-version: 0.7955
+version: 0.7956

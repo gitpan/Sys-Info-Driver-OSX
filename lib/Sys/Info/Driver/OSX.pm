@@ -20,7 +20,7 @@ use Capture::Tiny qw( capture );
 use Carp          qw( croak   );
 use Mac::PropertyList;
 
-our $VERSION = '0.7955';
+our $VERSION = '0.7956';
 our @EXPORT  = qw(
     fsysctl
     nsysctl
@@ -156,7 +156,7 @@ Sys::Info::Driver::OSX - OSX driver for Sys::Info
 
 =head1 DESCRIPTION
 
-This document describes version C<0.7955> of C<Sys::Info::Driver::OSX>
+This document describes version C<0.7956> of C<Sys::Info::Driver::OSX>
 released on C<11 May 2013>.
 
 This is the main module in the C<OSX> driver collection.

@@ -2,7 +2,7 @@ package Sys::Info::Driver::OSX::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.7955';
+our $VERSION = '0.7956';
 
 use base qw( Sys::Info::Base );
 use Carp qw( croak );
@@ -197,11 +197,16 @@ sub fs {
 
 sub bitness {
     my $self = shift;
-    my($sw) = system_profiler( 'SPSoftwareDataType' );
-    return if ref $sw ne 'HASH';
-    return if ! exists $sw->{'64bit_kernel_and_kexts'};
-    my $type = $sw->{'64bit_kernel_and_kexts'} || q{};
-    return $type eq 'yes' ? 64 : 32;
+    my $v    = $self->uname->{version} || q{};
+    return $v =~ m{ [/]RELEASE_X86_64 \z }xms ? 64
+        :  $v =~ m{ [/]RELEASE_I386      }xms ? 32
+        : do {
+            my($sw) = system_profiler( 'SPSoftwareDataType' );
+            return if ref $sw ne 'HASH';
+            return if ! exists $sw->{'64bit_kernel_and_kexts'};
+            my $type = $sw->{'64bit_kernel_and_kexts'} || q{};
+            return $type eq 'yes' ? 64 : 32;
+    }
 }
 
 # ------------------------[ P R I V A T E ]------------------------ #
@@ -333,7 +338,7 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.7955> of C<Sys::Info::Driver::OSX::OS>
+This document describes version C<0.7956> of C<Sys::Info::Driver::OSX::OS>
 released on C<11 May 2013>.
 
 -

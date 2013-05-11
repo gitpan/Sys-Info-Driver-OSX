@@ -1,5 +1,8 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
+0.7956 Sat May 11 06:05:40 2013
+    => Fix OS bitness detection
+
 0.7955 Fri May 10 04:35:40 2013
     => Handle plist blow ups correctly.
 
