@@ -2,7 +2,7 @@ package Sys::Info::Driver::OSX::OS;
 use strict;
 use warnings;
 
-our $VERSION = '0.7956';
+our $VERSION = '0.7957';
 
 use base qw( Sys::Info::Base );
 use Carp qw( croak );
@@ -75,9 +75,8 @@ sub meta {
 
     my $cpu       = Sys::Info::Device->new('CPU');
     my $arch      = ($cpu->identify)[0]->{architecture};
-    my $physmem   = fsysctl('hw.memsize'); # physmem
-    my $usermem   = fsysctl('hw.usermem');
     my %swap      = $self->_probe_swap;
+    my %vm_stat   = vm_stat();
     my %info;
 
     # http://jaharmi.com/2007/05/11/read_the_mac_os_x_edition_and_version_from_prope
@@ -92,8 +91,8 @@ sub meta {
     $info{install_date}              = $self->_install_date;
     $info{boot_device}               = undef;
 
-    $info{physical_memory_total}     = $physmem;
-    $info{physical_memory_available} = $physmem - $usermem;
+    $info{physical_memory_total}     = fsysctl('hw.memsize');
+    $info{physical_memory_available} = $vm_stat{memory_free};
     $info{page_file_total}           = $swap{total};
     $info{page_file_available}       = $swap{free};
 
@@ -338,8 +337,8 @@ Sys::Info::Driver::OSX::OS - OSX backend
 
 =head1 DESCRIPTION
 
-This document describes version C<0.7956> of C<Sys::Info::Driver::OSX::OS>
-released on C<11 May 2013>.
+This document describes version C<0.7957> of C<Sys::Info::Driver::OSX::OS>
+released on C<13 May 2013>.
 
 -
 
@@ -395,6 +394,6 @@ Copyright 2010 - 2013 Burak Gursoy. All rights reserved.
 =head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.16.2 or,
+it under the same terms as Perl itself, either Perl version 5.12.4 or,
 at your option, any later version of Perl 5 you may have available.
 =cut
