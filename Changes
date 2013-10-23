@@ -1,5 +1,8 @@
 Revision history for Perl extension Sys::Info::Driver::OSX.
 
+0.7958 Wed Oct 23 06:57:04 2013
+    => Update the editions list for 10.[89]
+
 0.7957 Sat May 11 07:35:30 2013
     => Fix memory stats.
     => Use full paths for system calls.
